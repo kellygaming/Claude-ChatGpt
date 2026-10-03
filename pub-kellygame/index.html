@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Kelly Gaming — Pub</title>
+<style>
+@font-face { font-family: 'Orbitron'; src: url(fonts/orbitron.woff2) format('woff2'); font-weight: 400 900; }
+@font-face { font-family: 'Rajdhani'; src: url(fonts/rajdhani-500.woff2) format('woff2'); font-weight: 500; }
+@font-face { font-family: 'Rajdhani'; src: url(fonts/rajdhani-600.woff2) format('woff2'); font-weight: 600; }
+@font-face { font-family: 'Rajdhani'; src: url(fonts/rajdhani-700.woff2) format('woff2'); font-weight: 700; }
+
+/* Charte reprise de kellygame.shop */
+:root {
+  --red: #ff2244;
+  --red-dark: #cc0033;
+  --purple: #7c3aed;
+  --purple-light: #a855f7;
+  --bg: #07070d;
+  --text: #e8e8f0;
+  --muted: #9a9ab0;
+  --glass: rgba(58, 52, 82, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.16);
+  --font-head: 'Orbitron', sans-serif;
+  --font-body: 'Rajdhani', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+body { font-family: var(--font-body); color: var(--text); }
+
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+#bg { position: absolute; inset: 0; }
+.scene { position: absolute; inset: 0; opacity: 0; will-change: transform, opacity; }
+.center { display: flex; align-items: center; justify-content: center; }
+
+/* Carte « verre dépoli », comme dans la pub d'origine */
+.glass {
+  position: absolute;
+  background: linear-gradient(160deg, rgba(80, 70, 115, 0.62), rgba(40, 34, 64, 0.62));
+  border: 1.5px solid var(--glass-border);
+  border-radius: 34px;
+  backdrop-filter: blur(28px) saturate(140%);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -18px 40px rgba(124, 58, 237, 0.10),
+    0 30px 80px rgba(0, 0, 0, 0.45);
+}
+.caret { display: inline-block; width: 3px; height: 1em; background: var(--text); vertical-align: -0.12em; margin-left: 3px; }
+
+/* ---------- Scène 1 : logo ---------- */
+#s1 .logo-row { display: flex; align-items: center; gap: 44px; }
+#s1 img { width: 190px; height: 190px; border-radius: 44px; box-shadow: 0 0 80px rgba(255, 34, 68, 0.55); }
+#s1 h1 { font-family: var(--font-head); font-weight: 900; font-size: 150px; letter-spacing: 6px; line-height: 1; }
+#s1 h1 span { display: inline-block; }
+#s1 h1 .accent { color: var(--red); }
+
+/* ---------- Scène 2 : champ vide ---------- */
+#s2 .glass { left: 610px; top: 330px; width: 700px; height: 210px; }
+.send-btn {
+  position: absolute; width: 58px; height: 58px; border-radius: 16px;
+  background: linear-gradient(145deg, var(--red), var(--red-dark));
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 26px rgba(255, 34, 68, 0.45);
+}
+.send-btn svg { width: 26px; height: 26px; }
+
+/* ---------- Scène 3 : jeux populaires ---------- */
+#s3 .glass { left: 260px; top: 190px; width: 1400px; height: 700px; padding: 64px 72px; }
+#s3 .title { display: flex; align-items: center; gap: 20px; font-family: var(--font-head); font-weight: 700; font-size: 46px; }
+#s3 .title .spark { color: var(--red); font-size: 50px; }
+#s3 .sub { margin-top: 18px; font-size: 40px; font-weight: 500; color: var(--muted); min-height: 50px; }
+#s3 .games { display: grid; grid-template-columns: repeat(4, 1fr); gap: 34px; margin-top: 54px; }
+.game { position: relative; border-radius: 26px; padding: 18px; background: rgba(255, 255, 255, 0.05); border: 1.5px solid rgba(255, 255, 255, 0.10); }
+.game img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 18px; display: block; }
+.game .name { margin-top: 16px; font-family: var(--font-head); font-weight: 700; font-size: 25px; }
+.game .cur { margin-top: 4px; font-size: 26px; font-weight: 600; color: var(--muted); }
+.badge {
+  position: absolute; top: 30px; right: 30px; padding: 5px 14px; border-radius: 99px;
+  font-family: var(--font-head); font-size: 16px; font-weight: 700; letter-spacing: 1px;
+  background: var(--red); color: #fff; box-shadow: 0 4px 18px rgba(255, 34, 68, 0.6);
+}
+
+/* ---------- Scène 4 : prompt de commande ---------- */
+#s4 .glass { left: 410px; top: 330px; width: 1100px; height: 380px; padding: 36px 44px; }
+#s4 .chips { display: flex; gap: 16px; }
+.chip {
+  display: flex; align-items: center; gap: 14px; padding: 10px 22px 10px 10px; border-radius: 20px;
+  background: rgba(10, 8, 20, 0.55); border: 1.5px solid rgba(255, 255, 255, 0.12);
+  font-size: 26px; font-weight: 600;
+}
+.chip img { width: 62px; height: 62px; border-radius: 14px; object-fit: cover; }
+.chip small { display: block; font-size: 19px; color: var(--muted); font-weight: 500; }
+#s4 .prompt { margin-top: 34px; font-size: 44px; font-weight: 600; line-height: 1.25; min-height: 110px; }
+#s4 .bar { position: absolute; left: 44px; right: 40px; bottom: 34px; display: flex; align-items: center; justify-content: space-between; }
+#s4 .plus { font-size: 52px; color: var(--muted); font-weight: 500; line-height: 1; }
+#s4 .right { display: flex; align-items: center; gap: 26px; }
+#s4 .send-btn { position: relative; }
+#s4 .pulse { position: absolute; inset: 0; border-radius: 16px; border: 3px solid var(--red); opacity: 0; }
+
+/* ---------- Scène 5 : workflow ---------- */
+#s5 .glass { left: 220px; top: 150px; width: 1480px; height: 790px; padding: 0; }
+#s5 svg.links { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.node {
+  position: absolute; width: 360px; padding: 28px 30px 26px; border-radius: 26px;
+  background: linear-gradient(160deg, rgba(95, 82, 140, 0.55), rgba(48, 40, 78, 0.6));
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 18px 50px rgba(0, 0, 0, 0.35);
+}
+.node .step { font-size: 22px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; }
+.node h3 { margin-top: 6px; font-family: var(--font-head); font-weight: 700; font-size: 32px; }
+.node p { margin-top: 10px; font-size: 26px; font-weight: 500; color: #c8c8dc; line-height: 1.2; }
+.node .pay { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.node .pay span { font-size: 19px; font-weight: 700; padding: 4px 12px; border-radius: 99px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.14); }
+.node .act {
+  margin-top: 20px; height: 44px; border-radius: 12px; border: 1.5px dashed rgba(255, 255, 255, 0.28);
+  display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 21px; font-weight: 700; color: #d8d8ea;
+}
+.node .act.done { border-style: solid; border-color: rgba(255, 34, 68, 0.9); background: rgba(255, 34, 68, 0.18); color: #fff; }
+#s5 .result { position: absolute; left: 76px; right: 76px; bottom: 90px; font-size: 44px; font-weight: 600; line-height: 1.3; }
+#s5 .result .ok { color: var(--red); }
+
+/* ---------- Scène 6 : preuves sociales ---------- */
+#s6 h2 { position: absolute; top: 230px; width: 100%; text-align: center; font-family: var(--font-head); font-weight: 900; font-size: 62px; letter-spacing: 2px; }
+#s6 h2 .accent { color: var(--red); }
+#s6 .stats { position: absolute; top: 410px; left: 230px; right: 230px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+.stat { position: relative; height: 330px; padding: 48px 40px; text-align: center; }
+.stat .ico { font-size: 60px; }
+.stat .num { margin-top: 18px; font-family: var(--font-head); font-weight: 900; font-size: 74px; }
+.stat .lbl { margin-top: 14px; font-size: 32px; font-weight: 600; color: var(--muted); }
+
+/* ---------- Scène 7 : signature ---------- */
+#s7 { background: #000; }
+#s7 canvas { position: absolute; inset: 0; }
+#s7 .wrap { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+#s7 .halo { position: absolute; width: 900px; height: 900px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 34, 68, 0.38), rgba(124, 58, 237, 0.16) 40%, transparent 68%); }
+#s7 img { position: relative; width: 230px; height: 230px; border-radius: 54px; box-shadow: 0 0 90px rgba(255, 34, 68, 0.7); }
+#s7 .tag { position: relative; margin-top: 54px; font-family: var(--font-head); font-weight: 700; font-size: 42px; letter-spacing: 8px; }
+#s7 .url {
+  position: relative; margin-top: 30px; padding: 14px 40px; border-radius: 99px;
+  font-family: var(--font-head); font-weight: 700; font-size: 34px; letter-spacing: 2px;
+  background: linear-gradient(135deg, var(--red), var(--purple)); box-shadow: 0 10px 40px rgba(255, 34, 68, 0.45);
+}
+#s7 .pays { position: relative; margin-top: 30px; font-size: 28px; font-weight: 600; color: var(--muted); letter-spacing: 1px; }
+
+/* Curseur souris */
+#cursor { position: absolute; left: 0; top: 0; width: 46px; height: 46px; opacity: 0; z-index: 50; filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5)); }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="bg" width="1920" height="1080"></canvas>
+
+  <!-- 1. Logo -->
+  <section class="scene center" id="s1">
+    <div class="logo-row">
+      <img src="assets/logo-kelly.jpg" alt="">
+      <h1 id="s1-title"></h1>
+    </div>
+  </section>
+
+  <!-- 2. Champ vide -->
+  <section class="scene" id="s2">
+    <div class="glass">
+      <div class="send-btn" style="right:26px; bottom:26px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      </div>
+      <span class="caret" id="s2-caret" style="position:absolute; left:44px; top:44px; font-size:44px"></span>
+    </div>
+  </section>
+
+  <!-- 3. Jeux populaires -->
+  <section class="scene" id="s3">
+    <div class="glass">
+      <div class="title"><span class="spark">✦</span><span>Jeux populaires cette semaine</span></div>
+      <div class="sub" id="s3-sub"></div>
+      <div class="games">
+        <div class="game"><img src="assets/free-fire.png" alt=""><span class="badge">TOP 1</span><div class="name">Free Fire</div><div class="cur">Diamants · Pass</div></div>
+        <div class="game"><img src="assets/pubg-mobile.webp" alt=""><span class="badge">DISPO</span><div class="name">PUBG Mobile</div><div class="cur">UC · Prime · Elite Pass</div></div>
+        <div class="game"><img src="assets/blood-strike.jpg" alt=""><span class="badge">DISPO</span><div class="name">Blood Strike</div><div class="cur">Jetons GC</div></div>
+        <div class="game"><img src="assets/roblox.webp" alt=""><span class="badge">DISPO</span><div class="name">Roblox</div><div class="cur">Robux Global</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Prompt de commande -->
+  <section class="scene" id="s4">
+    <div class="glass">
+      <div class="chips">
+        <div class="chip"><img src="assets/free-fire.png" alt=""><div>Free Fire<small>Recharge directe</small></div></div>
+        <div class="chip"><img src="assets/logo-kelly.jpg" alt=""><div>Kelly Gaming<small>kellygame.shop</small></div></div>
+      </div>
+      <div class="prompt" id="s4-prompt"></div>
+      <div class="bar">
+        <span class="plus">+</span>
+        <div class="right">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#9a9ab0" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+          <div class="send-btn" id="s4-send">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+            <span class="pulse" id="s4-pulse"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Workflow -->
+  <section class="scene" id="s5">
+    <div class="glass">
+      <svg class="links" viewBox="0 0 1480 790">
+        <path id="s5-l1" d="M436 340 C 500 340, 500 200, 560 200" fill="none" stroke="#e8e8f0" stroke-width="3" stroke-linecap="round"/>
+        <path id="s5-l2" d="M920 260 C 980 260, 990 340, 1044 340" fill="none" stroke="#e8e8f0" stroke-width="3" stroke-linecap="round"/>
+        <circle id="s5-d1" cx="560" cy="200" r="7" fill="#ff2244"/>
+        <circle id="s5-d2" cx="1044" cy="340" r="7" fill="#ff2244"/>
+      </svg>
+      <div class="node" id="s5-n1" style="left:76px; top:200px">
+        <div class="step">Étape 1</div>
+        <h3>Ton pack</h3>
+        <p>520 💎 Free Fire<br>ID joueur vérifié</p>
+        <div class="act" id="s5-a1">Choisir le pack</div>
+      </div>
+      <div class="node" id="s5-n2" style="left:560px; top:130px">
+        <div class="step">Étape 2</div>
+        <h3>Paiement</h3>
+        <p>Sans carte bancaire</p>
+        <div class="pay"><span>Orange Money</span><span>MTN MoMo</span><span>Wave</span></div>
+        <div class="act" id="s5-a2">Payer en sécurité</div>
+      </div>
+      <div class="node" id="s5-n3" style="left:1044px; top:200px">
+        <div class="step">Étape 3</div>
+        <h3>Livraison</h3>
+        <p>Crédité sur ton compte<br>en moins de 5 min</p>
+        <div class="act" id="s5-a3">Recevoir</div>
+      </div>
+      <div class="result" id="s5-result"></div>
+    </div>
+  </section>
+
+  <!-- 6. Preuves sociales -->
+  <section class="scene" id="s6">
+    <h2>La référence gaming <span class="accent">en Afrique</span></h2>
+    <div class="stats">
+      <div class="stat glass" style="position:relative"><div class="ico">🏆</div><div class="num" id="s6-n1">0</div><div class="lbl">Clients satisfaits</div></div>
+      <div class="stat glass" style="position:relative"><div class="ico">🌍</div><div class="num" id="s6-n2">0</div><div class="lbl">Pays · paiement local</div></div>
+      <div class="stat glass" style="position:relative"><div class="ico">⭐</div><div class="num" id="s6-n3">0</div><div class="lbl">Note Trustpilot</div></div>
+    </div>
+  </section>
+
+  <!-- 7. Signature -->
+  <section class="scene" id="s7">
+    <canvas id="stars" width="1920" height="1080"></canvas>
+    <div class="wrap">
+      <div class="halo"></div>
+      <img src="assets/logo-kelly.jpg" alt="">
+      <div class="tag" id="s7-tag">RECHARGE GAMING INSTANTANÉE</div>
+      <div class="url" id="s7-url">kellygame.shop</div>
+      <div class="pays" id="s7-pays">Orange Money · MTN MoMo · Wave · Carte bancaire</div>
+    </div>
+  </section>
+
+  <svg id="cursor" viewBox="0 0 24 24"><path d="M5 3l14 8-6.2 1.6L10 19z" fill="#f4f4fa" stroke="#1a1a28" stroke-width="1.2" stroke-linejoin="round"/></svg>
+</div>
+
+<script>
+/* Animation 100 % déterministe : render(t) dessine l'image exacte à l'instant t (secondes).
+   Le script de rendu appelle render() image par image ; en navigateur, une boucle rAF lit la pub en direct. */
+const DURATION = 33;
+const $ = (id) => document.getElementById(id);
+
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const easeOut = (p) => 1 - Math.pow(1 - p, 3);
+const easeInOut = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+const easeBack = (p) => { const c = 1.7; return 1 + (c + 1) * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
+const lerp = (a, b, p) => a + (b - a) * p;
+// Fenêtre de visibilité d'une scène : fondu entrant [a,b], fondu sortant [c,d]
+const win = (t, a, b, c, d) => Math.min(easeOut(prog(t, a, b)), 1 - easeInOut(prog(t, c, d)));
+const typed = (str, t, start, cps) => str.slice(0, Math.max(0, Math.floor((t - start) * cps)));
+const caretOn = (t) => Math.floor(t * 2.2) % 2 === 0;
+
+function setScene(el, o, tf = '') {
+  el.style.opacity = o;
+  el.style.visibility = o <= 0.001 ? 'hidden' : 'visible';
+  el.style.transform = tf;
+}
+
+/* ---------- Fond : rubans lumineux rouge/violet ---------- */
+const bg = $('bg').getContext('2d');
+function drawBg(t, fade) {
+  const W = 1920, H = 1080;
+  bg.globalCompositeOperation = 'source-over';
+  bg.fillStyle = '#07070d';
+  bg.fillRect(0, 0, W, H);
+  const rg = bg.createRadialGradient(W / 2, H / 2, 50, W / 2, H / 2, 1100);
+  rg.addColorStop(0, '#16112a');
+  rg.addColorStop(1, '#07070d');
+  bg.fillStyle = rg;
+  bg.fillRect(0, 0, W, H);
+  if (fade <= 0) return;
+
+  bg.globalCompositeOperation = 'lighter';
+  const bundles = [
+    { side: -1, base: 330, amp: 170, ph: 0.0, c1: '255,34,68', c2: '124,58,237' },
+    { side: 1, base: 300, amp: 190, ph: 1.7, c1: '168,85,247', c2: '255,34,68' },
+  ];
+  for (const b of bundles) {
+    for (let k = 0; k < 7; k++) {
+      const off = (k - 3) * 9;
+      bg.beginPath();
+      for (let x = -40; x <= W + 40; x += 16) {
+        const u = x / W - 0.5;
+        const y = H / 2 + b.side * (b.base - b.amp * Math.cos(u * Math.PI * 1.15 + 0.35 * Math.sin(t * 0.45 + b.ph))
+          + 26 * Math.sin(u * 7 + t * 0.9 + b.ph + k * 0.25)) + off;
+        x === -40 ? bg.moveTo(x, y) : bg.lineTo(x, y);
+      }
+      const g = bg.createLinearGradient(0, 0, W, 0);
+      const a = (k === 3 ? 0.55 : 0.16) * fade;
+      g.addColorStop(0, `rgba(${b.c1},0)`);
+      g.addColorStop(0.3, `rgba(${b.c1},${a})`);
+      g.addColorStop(0.7, `rgba(${b.c2},${a})`);
+      g.addColorStop(1, `rgba(${b.c2},0)`);
+      bg.strokeStyle = g;
+      bg.lineWidth = k === 3 ? 5 : 26;
+      bg.filter = k === 3 ? 'blur(2px)' : 'blur(22px)';
+      bg.stroke();
+    }
+  }
+  bg.filter = 'none';
+  bg.globalCompositeOperation = 'source-over';
+}
+
+/* Étoiles de la scène finale (pseudo-aléatoire stable) */
+const stars = $('stars').getContext('2d');
+const starList = Array.from({ length: 140 }, (_, i) => {
+  const r = (n) => { const s = Math.sin(i * 127.1 + n * 311.7) * 43758.5453; return s - Math.floor(s); };
+  return { x: r(1) * 1920, y: r(2) * 1080, s: 0.6 + r(3) * 1.8, tw: r(4) * 6.28, v: 6 + r(5) * 18 };
+});
+function drawStars(t) {
+  stars.clearRect(0, 0, 1920, 1080);
+  for (const s of starList) {
+    const a = 0.25 + 0.5 * (0.5 + 0.5 * Math.sin(t * 2 + s.tw));
+    stars.fillStyle = `rgba(255,255,255,${a})`;
+    stars.beginPath();
+    stars.arc(s.x, (s.y - t * s.v + 1080) % 1080, s.s, 0, 6.28);
+    stars.fill();
+  }
+}
+
+/* ---------- Préparation du texte ---------- */
+const TITLE = 'KELLY GAMING';
+$('s1-title').innerHTML = TITLE.split('').map((c, i) =>
+  `<span class="${i >= 6 ? 'accent' : ''}">${c === ' ' ? '&nbsp;' : c}</span>`).join('');
+const titleSpans = [...$('s1-title').children];
+
+const SUB = 'Recharge instantanée sur tes jeux favoris';
+const PROMPT = 'Recharge 520 diamants Free Fire sur mon ID 4827 1593 06';
+const RESULT_HTML = [
+  ['ok', 'Paiement Wave confirmé ✓ '],
+  ['', '520 diamants crédités sur ton compte Free Fire en moins de 5 minutes, sans carte bancaire.'],
+];
+// Texte de résultat découpé en caractères pour l'effet « fondu de traîne » de la pub d'origine
+const resultChars = [];
+$('s5-result').innerHTML = '';
+for (const [cls, txt] of RESULT_HTML) {
+  for (const ch of txt) {
+    const s = document.createElement('span');
+    if (cls) s.className = cls;
+    s.textContent = ch;
+    $('s5-result').appendChild(s);
+    resultChars.push(s);
+  }
+}
+
+const games = [...document.querySelectorAll('#s3 .game')];
+const nodes = ['s5-n1', 's5-n2', 's5-n3'].map($);
+const links = ['s5-l1', 's5-l2'].map($);
+const linkLen = links.map((l) => l.getTotalLength());
+links.forEach((l, i) => { l.style.strokeDasharray = linkLen[i]; });
+const stats = [...document.querySelectorAll('#s6 .stat')];
+
+/* Trajectoire du curseur : [temps, x, y] */
+const CURSOR = [
+  [3.6, 1500, 760], [4.6, 1265, 486], [5.0, 1265, 486],
+  [12.6, 1600, 800], [14.0, 1468, 658], [14.6, 1468, 658],
+  [17.0, 640, 700], [17.6, 548, 512], [18.6, 1032, 440], [19.8, 1516, 512], [20.6, 1600, 640],
+];
+const CLICKS = [4.75, 14.3, 17.6, 18.6, 19.8];
+
+function cursorAt(t) {
+  if (t <= CURSOR[0][0]) return CURSOR[0];
+  for (let i = 0; i < CURSOR.length - 1; i++) {
+    const [t0, x0, y0] = CURSOR[i], [t1, x1, y1] = CURSOR[i + 1];
+    if (t <= t1) { const p = easeInOut(prog(t, t0, t1)); return [t, lerp(x0, x1, p), lerp(y0, y1, p)]; }
+  }
+  return CURSOR[CURSOR.length - 1];
+}
+
+/* ---------- Rendu d'une image ---------- */
+function render(t) {
+  // Fond : visible jusqu'au plan final, qui passe au noir
+  drawBg(t, 1 - prog(t, 27.6, 28.6));
+
+  /* 1. Logo (0 → 3.4 s) */
+  {
+    const o = 1 - easeInOut(prog(t, 2.8, 3.4));
+    const sc = lerp(1.08, 1, easeOut(prog(t, 0, 1.4))) * lerp(1, 1.25, easeInOut(prog(t, 2.8, 3.4)));
+    setScene($('s1'), o, `scale(${sc})`);
+    $('s1').style.filter = `blur(${lerp(0, 14, prog(t, 2.8, 3.4))}px)`;
+    const img = $('s1').querySelector('img');
+    const pi = easeBack(prog(t, 0.1, 0.8));
+    img.style.transform = `scale(${pi}) rotate(${lerp(-25, 0, easeOut(prog(t, 0.1, 0.9)))}deg)`;
+    img.style.opacity = prog(t, 0.1, 0.4);
+    titleSpans.forEach((s, i) => {
+      const p = easeOut(prog(t, 0.45 + i * 0.06, 0.95 + i * 0.06));
+      s.style.opacity = p;
+      s.style.transform = `translateY(${lerp(40, 0, p)}px)`;
+      s.style.filter = `blur(${lerp(10, 0, p)}px)`;
+    });
+  }
+
+  /* 2. Champ vide (3.2 → 5.6 s) */
+  {
+    const o = win(t, 3.2, 3.8, 5.2, 5.6);
+    const y = lerp(60, 0, easeOut(prog(t, 3.2, 3.9)));
+    const sc = lerp(1, 1.15, easeInOut(prog(t, 5.0, 5.6)));
+    setScene($('s2'), o, `translateY(${y}px) scale(${sc})`);
+    $('s2-caret').style.opacity = caretOn(t) ? 1 : 0;
+    const btn = $('s2').querySelector('.send-btn');
+    const press = 1 - 0.12 * Math.sin(Math.PI * prog(t, 4.7, 4.95));
+    btn.style.transform = `scale(${press})`;
+  }
+
+  /* 3. Jeux populaires (5.3 → 10.4 s) */
+  {
+    const o = win(t, 5.3, 5.9, 9.9, 10.4);
+    const sc = lerp(0.92, 1, easeOut(prog(t, 5.3, 6.1))) * lerp(1, 0.94, easeInOut(prog(t, 9.9, 10.4)));
+    setScene($('s3'), o, `scale(${sc})`);
+    const sub = typed(SUB, t, 6.0, 26);
+    $('s3-sub').innerHTML = sub + (t < 8.2 || caretOn(t) ? '<span class="caret"></span>' : '');
+    games.forEach((g, i) => {
+      const p = easeBack(prog(t, 6.5 + i * 0.22, 7.2 + i * 0.22));
+      g.style.opacity = clamp(prog(t, 6.5 + i * 0.22, 6.8 + i * 0.22));
+      g.style.transform = `translateY(${lerp(70, 0, p)}px) scale(${lerp(0.85, 1, p)})`;
+      // Mise en avant de Free Fire
+      const hi = i === 0 ? easeInOut(prog(t, 8.4, 8.9)) * (1 - easeInOut(prog(t, 9.6, 10))) : 0;
+      g.style.borderColor = `rgba(255,34,68,${0.1 + hi * 0.9})`;
+      g.style.boxShadow = hi ? `0 0 ${50 * hi}px rgba(255,34,68,${0.55 * hi})` : 'none';
+      if (i === 0) g.style.transform += ` scale(${1 + 0.04 * hi})`;
+    });
+  }
+
+  /* 4. Prompt de commande (10.2 → 15.4 s) */
+  {
+    const o = win(t, 10.2, 10.8, 14.9, 15.4);
+    const y = lerp(80, 0, easeOut(prog(t, 10.2, 11.0)));
+    const sc = lerp(1, 0.9, easeInOut(prog(t, 14.9, 15.4)));
+    setScene($('s4'), o, `translateY(${y}px) scale(${sc})`);
+    [...$('s4').querySelectorAll('.chip')].forEach((c, i) => {
+      const p = easeBack(prog(t, 10.6 + i * 0.2, 11.2 + i * 0.2));
+      c.style.opacity = clamp(prog(t, 10.6 + i * 0.2, 10.9 + i * 0.2));
+      c.style.transform = `scale(${p})`;
+    });
+    const txt = typed(PROMPT, t, 11.3, 21);
+    $('s4-prompt').innerHTML = txt + (caretOn(t) || t < 14 ? '<span class="caret"></span>' : '');
+    const press = prog(t, 14.3, 14.55);
+    $('s4-send').style.transform = `scale(${1 - 0.14 * Math.sin(Math.PI * press)})`;
+    const pp = prog(t, 14.3, 14.9);
+    $('s4-pulse').style.opacity = pp > 0 && pp < 1 ? 1 - pp : 0;
+    $('s4-pulse').style.transform = `scale(${1 + pp * 0.9})`;
+  }
+
+  /* 5. Workflow (15.2 → 23.5 s) */
+  {
+    const o = win(t, 15.2, 15.8, 23.0, 23.5);
+    const sc = lerp(0.94, 1, easeOut(prog(t, 15.2, 16.0)));
+    const y = lerp(0, -40, easeInOut(prog(t, 23.0, 23.5)));
+    setScene($('s5'), o, `translateY(${y}px) scale(${sc})`);
+    const nodeIn = [15.6, 16.0, 16.4];
+    nodes.forEach((n, i) => {
+      const p = easeBack(prog(t, nodeIn[i], nodeIn[i] + 0.6));
+      n.style.opacity = prog(t, nodeIn[i], nodeIn[i] + 0.3);
+      n.style.transform = `translateY(${lerp(40, 0, p)}px) scale(${lerp(0.9, 1, p)})`;
+    });
+    // Les liens se dessinent après chaque validation d'étape
+    const linkT = [[17.7, 18.4], [18.7, 19.5]];
+    links.forEach((l, i) => {
+      const p = easeInOut(prog(t, linkT[i][0], linkT[i][1]));
+      l.style.strokeDashoffset = linkLen[i] * (1 - p);
+      $('s5-d' + (i + 1)).style.opacity = p >= 1 ? 1 : 0;
+    });
+    const doneAt = [17.6, 18.6, 19.8];
+    const labels = [['Choisir le pack', 'Pack choisi ✓'], ['Payer en sécurité', 'Paiement reçu ✓'], ['Recevoir', 'Livré ✓']];
+    doneAt.forEach((d, i) => {
+      const a = $('s5-a' + (i + 1));
+      const done = t >= d;
+      a.classList.toggle('done', done);
+      a.textContent = labels[i][done ? 1 : 0];
+      const bump = Math.sin(Math.PI * prog(t, d, d + 0.3));
+      nodes[i].style.boxShadow = done
+        ? `inset 0 1px 0 rgba(255,255,255,.18), 0 18px 50px rgba(0,0,0,.35), 0 0 ${30 + 30 * bump}px rgba(255,34,68,${0.25 + 0.3 * bump})`
+        : '';
+    });
+    // Texte qui s'écrit avec une traîne en fondu
+    const head = (t - 20.0) * 44;
+    resultChars.forEach((s, i) => { s.style.opacity = clamp((head - i) / 10); });
+  }
+
+  /* 6. Preuves sociales (23.3 → 28.0 s) */
+  {
+    const o = win(t, 23.3, 23.9, 27.5, 28.0);
+    const sc = lerp(1, 1.06, easeInOut(prog(t, 27.5, 28.0)));
+    setScene($('s6'), o, `scale(${sc})`);
+    const h2 = $('s6').querySelector('h2');
+    const ph = easeOut(prog(t, 23.4, 24.1));
+    h2.style.opacity = ph;
+    h2.style.transform = `translateY(${lerp(30, 0, ph)}px)`;
+    stats.forEach((s, i) => {
+      const p = easeBack(prog(t, 23.9 + i * 0.2, 24.6 + i * 0.2));
+      s.style.opacity = clamp(prog(t, 23.9 + i * 0.2, 24.2 + i * 0.2));
+      s.style.transform = `translateY(${lerp(60, 0, p)}px)`;
+    });
+    const c = easeOut(prog(t, 24.2, 26.0));
+    $('s6-n1').textContent = Math.round(1500 * c).toLocaleString('fr-FR').replace(/ | /g, ' ') + '+';
+    $('s6-n2').textContent = Math.round(20 * c);
+    $('s6-n3').textContent = (4.7 * c).toFixed(1) + '★';
+  }
+
+  /* 7. Signature (27.7 → 33 s) */
+  {
+    const o = easeOut(prog(t, 27.7, 28.4)) * (1 - easeInOut(prog(t, 32.3, 33)));
+    setScene($('s7'), o);
+    drawStars(t);
+    const img = $('s7').querySelector('img');
+    const p = easeBack(prog(t, 28.0, 28.8));
+    img.style.transform = `scale(${lerp(0.4, 1, p)})`;
+    img.style.opacity = prog(t, 28.0, 28.3);
+    const halo = $('s7').querySelector('.halo');
+    halo.style.transform = `scale(${0.85 + 0.08 * Math.sin(t * 2.4)})`;
+    halo.style.opacity = prog(t, 28.0, 28.8);
+    [['s7-tag', 28.6], ['s7-url', 29.1], ['s7-pays', 29.5]].forEach(([id, st]) => {
+      const q = easeOut(prog(t, st, st + 0.6));
+      $(id).style.opacity = q;
+      $(id).style.transform = `translateY(${lerp(24, 0, q)}px)`;
+    });
+    $('s7-tag').style.letterSpacing = `${lerp(22, 8, easeOut(prog(t, 28.6, 29.6)))}px`;
+  }
+
+  /* Curseur */
+  {
+    const [, x, y] = cursorAt(t);
+    const vis = Math.max(win(t, 3.6, 3.9, 5.0, 5.3), win(t, 12.6, 12.9, 14.6, 14.9), win(t, 17.0, 17.3, 20.4, 20.7));
+    const click = Math.max(...CLICKS.map((c) => Math.sin(Math.PI * prog(t, c, c + 0.2))));
+    const cur = $('cursor');
+    cur.style.opacity = vis;
+    cur.style.transform = `translate(${x}px, ${y}px) scale(${1 - 0.18 * click})`;
+  }
+}
+
+window.render = render;
+window.DURATION = DURATION;
+window.ready = document.fonts.ready.then(() => Promise.all(
+  [...document.images].map((i) => (i.complete ? null : new Promise((r) => { i.onload = i.onerror = r; })))));
+
+// Lecture en direct dans un navigateur (désactivée pendant le rendu vidéo)
+if (!location.hash.includes('capture')) {
+  window.ready.then(() => {
+    const t0 = performance.now();
+    const loop = (now) => { render(((now - t0) / 1000) % DURATION); requestAnimationFrame(loop); };
+    requestAnimationFrame(loop);
+  });
+}
+</script>
+</body>
+</html>
